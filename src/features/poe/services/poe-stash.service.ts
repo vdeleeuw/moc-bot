@@ -71,7 +71,7 @@ export class PoeStashService {
      */
     async getCompleteDivinationCardAllUsers(): Promise<PoeDivinationCard[]> {
         const mapItemUsers = this.getStashItemsAllUsers();
-        const allCards = this.poeDivinationCardService.prepareCardsStacksAllUsers(await mapItemUsers, 1);
+        const allCards = this.poeDivinationCardService.prepareCardsStacksAllUsers(await mapItemUsers, 2);
         return this.poeDivinationCardService.filtrerFullStacksDivinationCards(allCards);
     }
 
@@ -80,7 +80,7 @@ export class PoeStashService {
      */
     async getNotCompleteDivinationCardStashAllUsers(): Promise<PoeDivinationCard[]> {
         const mapItemUsers = this.getStashItemsAllUsers();
-        let allCards = this.poeDivinationCardService.prepareCardsStacksAllUsers(await mapItemUsers, 1);
+        let allCards = this.poeDivinationCardService.prepareCardsStacksAllUsers(await mapItemUsers, 2);
         allCards = this.poeDivinationCardService.filtrerNotFullStacksDivinationCards(allCards);
         return this.poeDivinationCardService.sortByCompletionDesc(allCards);
     }

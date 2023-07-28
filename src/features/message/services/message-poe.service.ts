@@ -322,8 +322,8 @@ export class MessagePoeService {
         ${this.messageUtils.bold("!poe league clear")} → Reset bot league
 
         ${this.messageUtils.boldUnderline("PoE divination cards")}
-        ${this.messageUtils.bold("!poe div stacks")} → List all card sets completed with a worth/card > 1c
-        ${this.messageUtils.bold("!poe div nostacks")} → List all card sets uncompleted with a worth/card > 1c
+        ${this.messageUtils.bold("!poe div stacks")} → List all card sets completed with a worth/card > 2c
+        ${this.messageUtils.bold("!poe div nostacks")} → List all card sets uncompleted with a worth/card > 2c
         ${this.messageUtils.bold("!poe div all")} → List all card sets of all players
 
         ${this.messageUtils.boldUnderline("PoE stash")}
