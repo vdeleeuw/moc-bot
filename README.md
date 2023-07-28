@@ -3,6 +3,7 @@
 ## Auteurs
 
 | [<img alt="vdeleeuw" src="https://avatars0.githubusercontent.com/u/17699276" width="140">](https://github.com/vdeleeuw) |
+| --- | 
 | [@vdeleeuw](https://github.com/vdeleeuw) |
 
 ## Description
