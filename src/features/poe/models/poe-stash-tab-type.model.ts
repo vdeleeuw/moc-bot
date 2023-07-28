@@ -1,0 +1,15 @@
+export enum PoeStashTabType {
+    BLIGHT = "BlightStash",
+    CURRENCY = "CurrencyStash",
+    DELIRIUM = "DeliriumStash",
+    DELVE = "DelveStash",
+    DIVINATION_CARD = "DivinationCardStash",
+    ESSENCE = "EssenceStash",
+    FRAGMENT = "FragmentStash",
+    MAP = "MapStash",
+    METAMORPH = "MetamorphStash",
+    PRENIUM = "PremiumStash",
+    QUAD = "QuadStash",
+    STANDARD = "StandardStash",
+    UNIQUE = "UniqueStash",
+}

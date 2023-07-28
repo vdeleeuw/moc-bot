@@ -1,0 +1,11 @@
+{
+    "discord": {
+        "token": ""
+    },
+    "poe": {
+        "privateLeague": {
+            "id": null,
+            "name": null
+        }
+    }
+}
