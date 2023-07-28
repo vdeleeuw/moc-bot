@@ -170,19 +170,17 @@ export class MessagePoeService {
      * @param message le message
      */
     private async sendCompleteStacksDivinationCardsPlayersMessage(message: Message): Promise<void> {
-            this.messageUtils.sendLongMessage(
-                "Completed card sets",
-                message,
-                (await this.poeStashService.getCompleteDivinationCardAllUsers()).reduce(
-                    (acc, card) =>
-                        acc +
-                        `${this.messageUtils.bold(card.name)} (${card.stackSize}/${card.maxStackSize}) → ${
-                            card.reward
-                        }\n`,
-                    "",
-                ),
-                "\n",
-            );
+        this.messageUtils.sendLongMessage(
+            "Completed card sets",
+            message,
+            (await this.poeStashService.getCompleteDivinationCardAllUsers()).reduce(
+                (acc, card) =>
+                    acc +
+                    `${this.messageUtils.bold(card.name)} (${card.stackSize}/${card.maxStackSize}) → ${card.reward}\n`,
+                "",
+            ),
+            "\n",
+        );
     }
 
     /**
@@ -191,19 +189,17 @@ export class MessagePoeService {
      * @param message le message
      */
     private async sendAllDivinationCardsAllPlayersMessage(message: Message): Promise<void> {
-            await this.messageUtils.sendLongMessage(
-                "All cards",
-                message,
-                (await this.poeStashService.getAllDivinationCardStashAllUsers()).reduce(
-                    (acc, card) =>
-                        acc +
-                        `${this.messageUtils.bold(card.name)} (${card.stackSize}/${card.maxStackSize}) → ${
-                            card.reward
-                        }\n`,
-                    "",
-                ),
-                "\n",
-            );
+        await this.messageUtils.sendLongMessage(
+            "All cards",
+            message,
+            (await this.poeStashService.getAllDivinationCardStashAllUsers()).reduce(
+                (acc, card) =>
+                    acc +
+                    `${this.messageUtils.bold(card.name)} (${card.stackSize}/${card.maxStackSize}) → ${card.reward}\n`,
+                "",
+            ),
+            "\n",
+        );
     }
 
     /**
@@ -212,19 +208,17 @@ export class MessagePoeService {
      * @param message le message
      */
     private async sendDivinationCardsPlayersMessage(message: Message): Promise<void> {
-            await this.messageUtils.sendLongMessage(
-                "Card sets not completed",
-                message,
-                (await this.poeStashService.getNotCompleteDivinationCardStashAllUsers()).reduce(
-                    (acc, card) =>
-                        acc +
-                        `${this.messageUtils.bold(card.name)} (${card.stackSize}/${card.maxStackSize}) → ${
-                            card.reward
-                        }\n`,
-                    "",
-                ),
-                "\n",
-            );
+        await this.messageUtils.sendLongMessage(
+            "Card sets not completed",
+            message,
+            (await this.poeStashService.getNotCompleteDivinationCardStashAllUsers()).reduce(
+                (acc, card) =>
+                    acc +
+                    `${this.messageUtils.bold(card.name)} (${card.stackSize}/${card.maxStackSize}) → ${card.reward}\n`,
+                "",
+            ),
+            "\n",
+        );
     }
 
     /**
@@ -233,18 +227,17 @@ export class MessagePoeService {
      * @param message le message
      */
     private async sendCurrencyRatesMessage(message: Message): Promise<void> {
-            await message.channel.send({
-                embeds: [
-                    this.messageUtils.createEmbedMessage(
-                        "PoE rates",
-                        (await this.poeCurrencyService.getCurrencyChaosRates()).reduce(
-                            (acc, curr) =>
-                                acc + `${curr.name} = ${this.messageUtils.bold(`${curr.chaosEquivalent}`)}c\n`,
-                            "",
-                        ),
+        await message.channel.send({
+            embeds: [
+                this.messageUtils.createEmbedMessage(
+                    "PoE rates",
+                    (await this.poeCurrencyService.getCurrencyChaosRates()).reduce(
+                        (acc, curr) => acc + `${curr.name} = ${this.messageUtils.bold(`${curr.chaosEquivalent}`)}c\n`,
+                        "",
                     ),
-                ],
-            });
+                ),
+            ],
+        });
     }
 
     /**
@@ -253,16 +246,16 @@ export class MessagePoeService {
      * @param message le message
      */
     private async sendTotalStashValueMessage(message: Message, requestedAccount?: string): Promise<void> {
-            const account =
-                requestedAccount ?? this.poeTokenService.getPoeUserFromDiscordTag(message?.author?.tag)?.accountName;
-            await message.channel.send({
-                embeds: [
-                    this.messageUtils.createEmbedMessage(
-                        `Stash value of ${account}`,
-                        `${await this.poeStashService.getTotalStashValue(account)} chaos`,
-                    ),
-                ],
-            });
+        const account =
+            requestedAccount ?? this.poeTokenService.getPoeUserFromDiscordTag(message?.author?.tag)?.accountName;
+        await message.channel.send({
+            embeds: [
+                this.messageUtils.createEmbedMessage(
+                    `Stash value of ${account}`,
+                    `${await this.poeStashService.getTotalStashValue(account)} chaos`,
+                ),
+            ],
+        });
     }
 
     /**
@@ -272,10 +265,13 @@ export class MessagePoeService {
      * @param compte le nom du compte
      */
     private async sendCharactersCompteMessage(message: Message, compte: string): Promise<void> {
-            const personnages = (await this.poeCharacterService.getCharactersNameForPlayer(compte)).join("\n");
-            message.channel.send({
-                embeds: [this.messageUtils.createEmbedMessage(`Characters of ${compte}`, personnages)],
-            });
+        const personnages = (await this.poeCharacterService.getCharactersAccount(compte))
+            .sort((x, y) => y.level - x.level)
+            .map((x) => `${x.name} - ${x.level}`)
+            .join("\n");
+        message.channel.send({
+            embeds: [this.messageUtils.createEmbedMessage(`Characters of ${compte}`, personnages)],
+        });
     }
 
     /**
@@ -284,12 +280,10 @@ export class MessagePoeService {
      * @param message le message
      */
     private async sendCurrentLeagueMessage(message: Message): Promise<void> {
-            const league = await this.poeLeagueService.getCurrentLeague();
-            await message.channel.send({
-                embeds: [
-                    this.messageUtils.createEmbedMessage("Current league", `${league.name}, ${league.description}`),
-                ],
-            });
+        const league = await this.poeLeagueService.getCurrentLeague();
+        await message.channel.send({
+            embeds: [this.messageUtils.createEmbedMessage("Current league", `${league.name}, ${league.description}`)],
+        });
     }
 
     /**
@@ -298,10 +292,10 @@ export class MessagePoeService {
      * @param message le message
      */
     private async sendResetCurrentLeagueMessage(message: Message): Promise<void> {
-            this.poeLeagueService.resetCurrentLeague();
-            await message.channel.send({
-                embeds: [this.messageUtils.createEmbedMessage("Current league is reset.")],
-            });
+        this.poeLeagueService.resetCurrentLeague();
+        await message.channel.send({
+            embeds: [this.messageUtils.createEmbedMessage("Current league is reset.")],
+        });
     }
 
     /**

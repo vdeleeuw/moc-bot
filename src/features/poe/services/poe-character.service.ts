@@ -10,22 +10,12 @@ export class PoeCharacterService {
     constructor(@inject(TYPES.PoeApiCallService) poeApiCallService: PoeApiCallService) {
         this.poeApiCallService = poeApiCallService;
     }
-
     /**
      * Recupere les personnage d'un user
      *
      * @param user le user
      */
-    async getCharactersNameForPlayer(user: string): Promise<string[]> {
-        return (await this.getCharactersAccount(user)).map((personnage) => personnage.name);
-    }
-
-    /**
-     * Recupere les personnage d'un user
-     *
-     * @param user le user
-     */
-    private async getCharactersAccount(user: string): Promise<PoeCharacter[]> {
+    async getCharactersAccount(user: string): Promise<PoeCharacter[]> {
         const personnages = await this.poeApiCallService.getCharacters({ accountName: user });
         const retour: PoeCharacter[] = [];
         for (const p of personnages.data) {
