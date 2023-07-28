@@ -3,7 +3,7 @@
 ## Auteurs
 
 | [<img alt="vdeleeuw" src="https://avatars0.githubusercontent.com/u/17699276" width="140">](https://github.com/vdeleeuw) |
-| --- | 
+| --- |
 | [@vdeleeuw](https://github.com/vdeleeuw) |
 
 ## Description
@@ -24,7 +24,7 @@ Puis pour compiler le TS et lancer le bot : `npm run dev`
 Mettre son token dans le config.json.  
 Remplir la matrice user avec le tag discord/poe si nécessaire.
 
-Utiliser [pm2](https://medium.com/@aunnnn/automate-digitalocean-deployment-for-node-js-with-git-and-pm2-67a3cfa7a02b) pour le run !  
+Utiliser [pm2](https://medium.com/@aunnnn/automate-digitalocean-deployment-for-node-js-with-git-and-pm2-67a3cfa7a02b) pour le run !
 
 ## A propos
 

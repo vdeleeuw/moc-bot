@@ -7,7 +7,6 @@ import { MessageEmoji } from "../constants/message-emoji.model";
 
 @injectable()
 export class MessageGenericService {
-    
     private messageUtils: MessageUtils;
     private randomUtils: RandomUtils;
 

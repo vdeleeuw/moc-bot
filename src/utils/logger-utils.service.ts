@@ -5,7 +5,6 @@ import { TYPES } from "../configuration";
 
 @injectable()
 export class LoggerUtils {
-    
     private messageUtils: MessageUtils;
 
     constructor(@inject(TYPES.MessageUtils) messageUtils: MessageUtils) {

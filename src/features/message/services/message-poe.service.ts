@@ -13,7 +13,6 @@ import { MessageEmoji } from "../constants";
 
 @injectable()
 export class MessagePoeService {
-
     private poeCharacterService: PoeCharacterService;
     private poeLeagueService: PoeLeagueService;
     private poeCurrencyService: PoeCurrencyService;
@@ -48,9 +47,9 @@ export class MessagePoeService {
     onMessage(message: Message): boolean {
         // commande poe
         if (message.content.startsWith("!poe")) {
-            const commandeArguments = message.content.toLowerCase().split(" ");
+            const commandArguments = message.content.toLowerCase().split(" ");
             // gestion des commandes
-            switch (commandeArguments[1]) {
+            switch (commandArguments[1]) {
                 // affichage de l'aide
                 case "help":
                     this.sendHelpMessage(message);
@@ -58,12 +57,12 @@ export class MessagePoeService {
 
                 // affichage des persos d'un compte
                 case "characters":
-                    this.sendCharactersCompteMessage(message, commandeArguments[2]);
+                    this.sendCharactersCompteMessage(message, commandArguments[2]);
                     return true;
 
                 // affichage des indos d'une league
                 case "league":
-                    switch (commandeArguments[2]) {
+                    switch (commandArguments[2]) {
                         case "clear":
                             this.sendResetCurrentLeagueMessage(message);
                             return true;
@@ -80,7 +79,7 @@ export class MessagePoeService {
 
                 // affichage des cards
                 case "div":
-                    switch (commandeArguments[2]) {
+                    switch (commandArguments[2]) {
                         case "stacks":
                             this.sendCompleteStacksDivinationCardsPlayersMessage(message);
                             return true;
@@ -96,21 +95,14 @@ export class MessagePoeService {
 
                 // affichage des values du stash
                 case "stash":
-                    this.sendTotalStashValueMessage(message, commandeArguments[2]);
+                    this.sendTotalStashValueMessage(message, commandArguments[2]);
                     return true;
 
                 // sauvegarde le token pour les appels
                 case "token":
-                    switch (commandeArguments[2]) {
+                    switch (commandArguments[2]) {
                         case "mine":
-                            message.channel.send({
-                                embeds: [
-                                    this.messageUtils.createEmbedMessage(
-                                        this.poeTokenService.getPoeUserFromDiscordTag(message?.author?.tag)?.token ??
-                                            "Token not found.",
-                                    ),
-                                ],
-                            });
+                            this.sendMineTokenMessage(message);
                             return true;
 
                         case "clear":
@@ -121,25 +113,7 @@ export class MessagePoeService {
                             return true;
 
                         default:
-                            if (
-                                this.poeTokenService.saveToken(
-                                    message?.author?.tag,
-                                    commandeArguments[2],
-                                    commandeArguments[3],
-                                )
-                            ) {
-                                message.channel.send({
-                                    embeds: [this.messageUtils.createEmbedMessage("Token PoE saved !")],
-                                });
-                            } else {
-                                message.channel.send({
-                                    embeds: [
-                                        this.messageUtils.createEmbedMessage(
-                                            `${MessageEmoji.CROIX} Error saving token`, "!poe help for more information."
-                                        ),
-                                    ],
-                                });
-                            }
+                            this.sendTokenSaveMessage(message, commandArguments[2], commandArguments[3]);
                             return true;
                     }
 
@@ -149,6 +123,45 @@ export class MessagePoeService {
             }
         }
         return false;
+    }
+
+    /**
+     * Répond au message de token mine
+     *
+     * @param message le message
+     */
+    private async sendMineTokenMessage(message: Message): Promise<void> {
+        message.channel.send({
+            embeds: [
+                this.messageUtils.createEmbedMessage(
+                    this.poeTokenService.getPoeUserFromDiscordTag(message?.author?.tag)?.token ?? "Token not found.",
+                ),
+            ],
+        });
+    }
+
+    /**
+     * Répond au message de token save
+     *
+     * @param message le message
+     * @param poeAccount le compte poe
+     * @param token le token
+     */
+    private async sendTokenSaveMessage(message: Message, poeAccount: string, token: string): Promise<void> {
+        if (this.poeTokenService.saveToken(message?.author?.tag, poeAccount, token)) {
+            message.channel.send({
+                embeds: [this.messageUtils.createEmbedMessage("Token PoE saved !")],
+            });
+        } else {
+            message.channel.send({
+                embeds: [
+                    this.messageUtils.createEmbedMessage(
+                        `${MessageEmoji.CROIX} Error saving token`,
+                        "!poe help for more information.",
+                    ),
+                ],
+            });
+        }
     }
 
     /**
@@ -257,7 +270,9 @@ export class MessagePoeService {
         } catch (err) {
             this.loggerUtils.logError(err);
             await message.channel.send({
-                embeds: [this.messageUtils.createEmbedMessage(`${MessageEmoji.CROIX} Error getting currency rates !`, err)],
+                embeds: [
+                    this.messageUtils.createEmbedMessage(`${MessageEmoji.CROIX} Error getting currency rates !`, err),
+                ],
             });
         }
     }

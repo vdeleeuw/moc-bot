@@ -3,9 +3,7 @@ import { injectable } from "inversify";
 
 @injectable()
 export class MessageUtils {
-    
-    constructor() {
-    }
+    constructor() {}
 
     /**
      * Test si un texte est dans un message

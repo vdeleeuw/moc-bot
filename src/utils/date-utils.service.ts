@@ -2,7 +2,6 @@ import { injectable } from "inversify";
 
 @injectable()
 export class DateUtils {
-    
     /**
      * Test si une date est plus vieille d'au moins une heure
      *

@@ -4,7 +4,6 @@ import { MESSAGE_EMOJI_COMPLIMENT, MESSAGE_EMOJI_INSULTE } from "../features/mes
 
 @injectable()
 export class RandomUtils {
-
     private randomizer: Chance.Chance;
 
     constructor() {
