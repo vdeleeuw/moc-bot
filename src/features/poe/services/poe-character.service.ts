@@ -34,22 +34,26 @@ export class PoeCharacterService {
         const delay: number = require("../../../../config.json").poe.deathalert.delay;
         setInterval(async () => {
             const channel: TextBasedChannel = this.alertPoeService.getDeathAlertChannel();
+            const updatedCharactersMap: Map<string, PoeCharacter[]> = new Map<string, PoeCharacter[]>();
+
             if (channel) {
-                for (const [account, characters] of this.characters.entries()) {
-                    const setCharacters = new Set(characters.map((c) => JSON.stringify(c)));
+                for (const [account, accCharacters] of this.characters.entries()) {
+                    const setCharacters = new Set(accCharacters.map((c) => JSON.stringify(c)));
                     const updatedCharacters = await this.getCharactersAccount(account);
                     const noDuplicatesCharacters = updatedCharacters.filter(
                         (c: PoeCharacter) => !setCharacters.has(JSON.stringify(c)),
                     );
-                    for (const c of noDuplicatesCharacters) {
-                        if (characters.map((ch) => ch.name).includes(c.name)) {
-                            this.alertPoeService.getDeathAlertChannel().send({
-                                embeds: [this.deathAlertPoeMessage(c)],
+                    for (const newChar of noDuplicatesCharacters) {
+                        const oldChar = accCharacters.find((x) => x.name === newChar.name);
+                        if (oldChar && newChar.experience < oldChar.experience) {
+                            channel.send({
+                                embeds: [this.deathAlertPoeMessage(newChar)],
                             });
                         }
                     }
-                    this.characters.set(account, updatedCharacters);
+                    updatedCharactersMap.set(account, updatedCharacters);
                 }
+                this.characters = updatedCharactersMap;
             }
         }, delay);
     }
@@ -93,15 +97,17 @@ export class PoeCharacterService {
     async getCharactersAccount(user: string): Promise<PoeCharacter[]> {
         const personnages = await this.poeApiCallService.getCharacters({ accountName: user });
         const retour: PoeCharacter[] = [];
-        for (const p of personnages.data) {
-            retour.push({
-                account: user,
-                class: p.class,
-                experience: p.experience,
-                league: p.league,
-                level: p.level,
-                name: p.name,
-            });
+        if (personnages) {
+            for (const p of personnages.data) {
+                retour.push({
+                    account: user,
+                    class: p.class,
+                    experience: p.experience,
+                    league: p.league,
+                    level: p.level,
+                    name: p.name,
+                });
+            }
         }
         return retour;
     }
