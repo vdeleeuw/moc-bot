@@ -7,8 +7,8 @@
             "id": null,
             "name": null
         },
-        "deathalert": {
-            "delay": 30000,
+        "alerts": {
+            "delay": 180000,
             "accounts": []
         }
     }
