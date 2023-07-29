@@ -39,7 +39,7 @@ export class PoeCharacterService {
                     const setCharacters = new Set(characters.map((c) => JSON.stringify(c)));
                     const updatedCharacters = await this.getCharactersAccount(account);
                     const noDuplicatesCharacters = updatedCharacters.filter(
-                        (c) => !setCharacters.has(JSON.stringify(c)),
+                        (c: PoeCharacter) => !setCharacters.has(JSON.stringify(c)),
                     );
                     for (const c of noDuplicatesCharacters) {
                         if (characters.map((ch) => ch.name).includes(c.name)) {
@@ -48,6 +48,7 @@ export class PoeCharacterService {
                             });
                         }
                     }
+                    this.characters.set(account, updatedCharacters);
                 }
             }
         }, delay);
