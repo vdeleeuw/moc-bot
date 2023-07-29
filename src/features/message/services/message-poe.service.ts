@@ -59,12 +59,12 @@ export class MessagePoeService {
                 // affichage des persos d'un compte
                 case "characters":
                     switch (commandArguments[2]) {
-                        case "deathalert":
-                            this.sendCharactersDeathAlertMessage(message, commandArguments[3]);
+                        case "alerts":
+                            this.sendCharactersAlertMessage(message, commandArguments[3]);
                             return true;
 
                         default:
-                            this.sendCharactersCompteMessage(message, commandArguments[2]);
+                            this.sendCharactersAccountMessage(message, commandArguments[2]);
                             return true;
                     }
 
@@ -125,7 +125,7 @@ export class MessagePoeService {
                 // sauvegarde le token pour les appels
                 case "channel":
                     switch (commandArguments[2]) {
-                        case "alert":
+                        case "alerts":
                             this.sendChannelAlertSetMessage(message);
                             return true;
 
@@ -317,7 +317,7 @@ export class MessagePoeService {
      * @param message le message
      * @param compte le nom du compte
      */
-    private async sendCharactersCompteMessage(message: Message, compte: string): Promise<void> {
+    private async sendCharactersAccountMessage(message: Message, compte: string): Promise<void> {
         const personnages = (await this.poeCharacterService.getCharactersAccount(compte))
             .sort((x, y) => y.level - x.level)
             .map((x) => `${x.name} - ${x.level}`)
@@ -333,10 +333,10 @@ export class MessagePoeService {
      * @param message le message
      * @param compte le nom du compte
      */
-    private async sendCharactersDeathAlertMessage(message: Message, compte: string): Promise<void> {
-        this.poeCharacterService.addCharactersForAccountDeathAlert(compte);
+    private async sendCharactersAlertMessage(message: Message, compte: string): Promise<void> {
+        this.poeCharacterService.addCharactersAccountAlerts(compte);
         message.channel.send({
-            embeds: [this.messageUtils.createEmbedMessage(`Account ${compte} added for deaths alerts.`)],
+            embeds: [this.messageUtils.createEmbedMessage(`Account ${compte} added for PoE alerts.`)],
         });
     }
 
@@ -373,7 +373,7 @@ export class MessagePoeService {
         const corpsMessage = `\
         ${this.messageUtils.boldUnderline("PoE characters")}
         ${this.messageUtils.bold("!poe characters [account]")} → List all characters from [account]
-        ${this.messageUtils.bold("!poe characters deathalert [account]")} → Add [account] for deathalert on discord.
+        ${this.messageUtils.bold("!poe characters alerts [account]")} → Add [account] for deathalert on discord.
 
         ${this.messageUtils.boldUnderline("PoE rates")}
         ${this.messageUtils.bold("!poe rates")} → List currency rates from poe.ninja
@@ -396,7 +396,7 @@ export class MessagePoeService {
         ${this.messageUtils.bold("!poe token clear")} → Reset all saved PoE tokens
 
         ${this.messageUtils.boldUnderline("PoE channel configuration")}
-        ${this.messageUtils.bold("!poe channel alert")} → Modify discord channel to send PoE alerts.
+        ${this.messageUtils.bold("!poe channel alerts")} → Modify discord channel to send PoE alerts.
         ${this.messageUtils.bold("!poe channel clear")} → Clear discord channel to send PoE alerts.`;
 
         await message.channel.send({

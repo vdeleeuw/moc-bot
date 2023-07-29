@@ -23,14 +23,14 @@ export class PoeCharacterService {
         this.messageUtils = messageUtils;
         this.poeApiCallService = poeApiCallService;
 
-        this.initDeathAlert();
+        this.initPoeCharacterAlerts();
     }
 
     /**
      * Lance la routine de controle des morts + alerts
      */
-    private async initDeathAlert() {
-        await this.initCharactersForAccountsDeathAlert();
+    private async initPoeCharacterAlerts() {
+        await this.initCharactersAccountAlerts();
         const delay: number = require("../../../../config.json").poe.deathalert.delay;
         setInterval(async () => {
             const channel: TextBasedChannel = this.alertPoeService.getDeathAlertChannel();
@@ -45,9 +45,22 @@ export class PoeCharacterService {
                     );
                     for (const newChar of noDuplicatesCharacters) {
                         const oldChar = accCharacters.find((x) => x.name === newChar.name);
+                        // death
                         if (oldChar && newChar.experience < oldChar.experience) {
                             channel.send({
                                 embeds: [this.deathAlertPoeMessage(newChar)],
+                            });
+                        }
+                        // level up
+                        if (oldChar && newChar.level > oldChar.level) {
+                            channel.send({
+                                embeds: [this.levelAlertPoeMessage(newChar)],
+                            });
+                        }
+                        // creation
+                        if (!oldChar) {
+                            channel.send({
+                                embeds: [this.createAlertPoeMessage(newChar)],
                             });
                         }
                     }
@@ -56,6 +69,19 @@ export class PoeCharacterService {
                 this.characters = updatedCharactersMap;
             }
         }, delay);
+    }
+
+    /**
+     * Ecrit un message pour dire qu'un perso est créé
+     * @param character le perso créé
+     */
+    createAlertPoeMessage(character: PoeCharacter): EmbedBuilder {
+        return this.messageUtils.createEmbedMessage(
+            "👶 PoE character creation 👶",
+            `${this.messageUtils.bold(character.account)} has just created a new ${this.messageUtils.bold(
+                character.class,
+            )} named ${this.messageUtils.bold(character.name)}.`,
+        );
     }
 
     /**
@@ -72,9 +98,22 @@ export class PoeCharacterService {
     }
 
     /**
+     * Ecrit un message pour les levels
+     * @param character le perso qui level
+     */
+    levelAlertPoeMessage(character: PoeCharacter): EmbedBuilder {
+        return this.messageUtils.createEmbedMessage(
+            "✨ PoE level up ✨",
+            `${this.messageUtils.bold(character.account)}'s character ${this.messageUtils.bold(
+                character.name,
+            )} leveled up ${this.messageUtils.bold(`${character.level}`)} !`,
+        );
+    }
+
+    /**
      * Récupère les persos des comptes paramétrés dans le config.json
      */
-    private async initCharactersForAccountsDeathAlert() {
+    private async initCharactersAccountAlerts() {
         const accounts: string[] = require("../../../../config.json").poe.deathalert.accounts;
         for (const acc of accounts) {
             this.characters.set(acc, await this.getCharactersAccount(acc));
@@ -85,7 +124,7 @@ export class PoeCharacterService {
      * Ajoute les persos d'un compte dans le death alert
      * @param account compte a ajouter
      */
-    async addCharactersForAccountDeathAlert(account: string) {
+    async addCharactersAccountAlerts(account: string) {
         this.characters.set(account, await this.getCharactersAccount(account));
     }
 
