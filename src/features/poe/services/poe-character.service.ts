@@ -34,8 +34,6 @@ export class PoeCharacterService {
         const delay: number = this.alertPoeService.getAlertDelay();
         setInterval(async () => {
             const channel: TextBasedChannel = this.alertPoeService.getAlertChannel();
-            const updatedCharactersMap: Map<string, PoeCharacter[]> = new Map<string, PoeCharacter[]>();
-
             if (channel) {
                 for (const [account, accCharacters] of this.characters.entries()) {
                     const setCharacters = new Set(accCharacters.map((c) => JSON.stringify(c)));
@@ -64,9 +62,8 @@ export class PoeCharacterService {
                             });
                         }
                     }
-                    updatedCharactersMap.set(account, updatedCharacters);
+                    this.characters.set(account, updatedCharacters);
                 }
-                this.characters = updatedCharactersMap;
             }
         }, delay);
     }
