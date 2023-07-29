@@ -28,4 +28,5 @@ Utiliser [pm2](https://medium.com/@aunnnn/automate-digitalocean-deployment-for-n
 
 ## A propos
 
-Projet réalisé par [vdeleeuw](https://github.com/vdeleeuw).
+Projet réalisé par [vdeleeuw](https://github.com/vdeleeuw).  
+This product isn't affiliated with or endorsed by Grinding Gear Games in any way.

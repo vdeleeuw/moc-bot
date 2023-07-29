@@ -1,4 +1,4 @@
-import { Message, SlashCommandBuilder } from "discord.js";
+import { Message } from "discord.js";
 import { injectable, inject } from "inversify";
 import {
     PoeCharacterService,
@@ -8,8 +8,9 @@ import {
     PoeUserService,
 } from "../../../features/poe/services";
 import { TYPES } from "../../../configuration";
-import { LoggerUtils, MessageUtils } from "../../../utils";
+import { MessageUtils } from "../../../utils";
 import { MessageEmoji } from "../constants";
+import { AlertPoeService } from "../../alert/service";
 
 @injectable()
 export class MessagePoeService {
@@ -18,8 +19,8 @@ export class MessagePoeService {
     private poeCurrencyService: PoeCurrencyService;
     private poeStashService: PoeStashService;
     private poeTokenService: PoeUserService;
+    private alertPoeService: AlertPoeService;
     private messageUtils: MessageUtils;
-    private loggerUtils: LoggerUtils;
 
     constructor(
         @inject(TYPES.PoeCharacterService) poeCharacterService: PoeCharacterService,
@@ -27,16 +28,16 @@ export class MessagePoeService {
         @inject(TYPES.PoeCurrencyService) poeCurrencyService: PoeCurrencyService,
         @inject(TYPES.PoeStashService) poeStashService: PoeStashService,
         @inject(TYPES.PoeUserService) poeTokenService: PoeUserService,
+        @inject(TYPES.AlertPoeService) alertPoeService: AlertPoeService,
         @inject(TYPES.MessageUtils) messageUtils: MessageUtils,
-        @inject(TYPES.LoggerUtils) loggerUtils: LoggerUtils,
     ) {
         this.poeCharacterService = poeCharacterService;
         this.poeLeagueService = poeLeagueService;
         this.poeCurrencyService = poeCurrencyService;
         this.poeStashService = poeStashService;
         this.poeTokenService = poeTokenService;
+        this.alertPoeService = alertPoeService;
         this.messageUtils = messageUtils;
-        this.loggerUtils = loggerUtils;
     }
 
     /**
@@ -57,8 +58,15 @@ export class MessagePoeService {
 
                 // affichage des persos d'un compte
                 case "characters":
-                    this.sendCharactersCompteMessage(message, commandArguments[2]);
-                    return true;
+                    switch (commandArguments[2]) {
+                        case "deathalert":
+                            this.sendCharactersDeathAlertMessage(message, commandArguments[3]);
+                            return true;
+
+                        default:
+                            this.sendCharactersCompteMessage(message, commandArguments[2]);
+                            return true;
+                    }
 
                 // affichage des indos d'une league
                 case "league":
@@ -106,14 +114,23 @@ export class MessagePoeService {
                             return true;
 
                         case "clear":
-                            this.poeTokenService.clearPoeUsers();
-                            message.channel.send({
-                                embeds: [this.messageUtils.createEmbedMessage("Tokens PoE deleted.")],
-                            });
+                            this.sendClearTokenMessage(message);
                             return true;
 
                         default:
                             this.sendTokenSaveMessage(message, commandArguments[2], commandArguments[3]);
+                            return true;
+                    }
+
+                // sauvegarde le token pour les appels
+                case "channel":
+                    switch (commandArguments[2]) {
+                        case "alert":
+                            this.sendChannelAlertSetMessage(message);
+                            return true;
+
+                        case "clear":
+                            this.sendClearChannelAlertMessage(message);
                             return true;
                     }
 
@@ -123,6 +140,30 @@ export class MessagePoeService {
             }
         }
         return false;
+    }
+
+    /**
+     * Set le channel pour les alerts
+     *
+     * @param message le message dans lequel on recup le channel & on repond
+     */
+    private async sendChannelAlertSetMessage(message: Message): Promise<void> {
+        this.alertPoeService.setDeathAlertChannel(message.channel);
+        message.channel.send({
+            embeds: [this.messageUtils.createEmbedMessage("✅ Channel set for PoE alerts")],
+        });
+    }
+
+    /**
+     * Clear le channel pour les alerts
+     *
+     * @param message le message dans lequel on recup le channel & on repond
+     */
+    private async sendClearChannelAlertMessage(message: Message): Promise<void> {
+        this.alertPoeService.setDeathAlertChannel(undefined);
+        message.channel.send({
+            embeds: [this.messageUtils.createEmbedMessage("✅ Channel cleared for PoE alerts")],
+        });
     }
 
     /**
@@ -137,6 +178,18 @@ export class MessagePoeService {
                     this.poeTokenService.getPoeUserFromDiscordTag(message?.author?.tag)?.token ?? "Token not found.",
                 ),
             ],
+        });
+    }
+
+    /**
+     * Répond au message de clear token
+     *
+     * @param message le message
+     */
+    private async sendClearTokenMessage(message: Message): Promise<void> {
+        this.poeTokenService.clearPoeUsers();
+        message.channel.send({
+            embeds: [this.messageUtils.createEmbedMessage("✅ Tokens PoE deleted.")],
         });
     }
 
@@ -275,6 +328,19 @@ export class MessagePoeService {
     }
 
     /**
+     * Répond a l'ajout d'un compte dans le deathalert
+     *
+     * @param message le message
+     * @param compte le nom du compte
+     */
+    private async sendCharactersDeathAlertMessage(message: Message, compte: string): Promise<void> {
+        this.poeCharacterService.addCharactersForAccountDeathAlert(compte);
+        message.channel.send({
+            embeds: [this.messageUtils.createEmbedMessage(`Account ${compte} added for deaths alerts.`)],
+        });
+    }
+
+    /**
      * Répond au message d'une league
      *
      * @param message le message
@@ -307,6 +373,7 @@ export class MessagePoeService {
         const corpsMessage = `\
         ${this.messageUtils.boldUnderline("PoE characters")}
         ${this.messageUtils.bold("!poe characters [account]")} → List all characters from [account]
+        ${this.messageUtils.bold("!poe characters deathalert [account]")} → Add [account] for deathalert on discord.
 
         ${this.messageUtils.boldUnderline("PoE rates")}
         ${this.messageUtils.bold("!poe rates")} → List currency rates from poe.ninja
@@ -326,7 +393,11 @@ export class MessagePoeService {
         ${this.messageUtils.boldUnderline("PoE token")}
         ${this.messageUtils.bold("!poe token mine")} → Display my saved PoE token
         ${this.messageUtils.bold("!poe token [account] [token]")} → Save the [account] PoE [token] (POESESSID)
-        ${this.messageUtils.bold("!poe token clear")} → Reset all saved PoE tokens`;
+        ${this.messageUtils.bold("!poe token clear")} → Reset all saved PoE tokens
+
+        ${this.messageUtils.boldUnderline("PoE channel configuration")}
+        ${this.messageUtils.bold("!poe channel alert")} → Modify discord channel to send PoE alerts.
+        ${this.messageUtils.bold("!poe channel clear")} → Clear discord channel to send PoE alerts.`;
 
         await message.channel.send({
             embeds: [this.messageUtils.createEmbedMessage("PoE commands", corpsMessage)],

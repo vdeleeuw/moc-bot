@@ -31,7 +31,7 @@ export class PoeApiCallService {
 
         // request
         http.interceptors.request.use((config) => {
-            config.headers.setUserAgent("Axios-DiscordMoc");
+            config.headers.setUserAgent("Axios mocbot/1.0.0 StrictMode");
             this.loggerUtils.logApiCall(config.url);
             return config;
         });

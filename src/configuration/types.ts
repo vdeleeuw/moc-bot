@@ -3,23 +3,19 @@ export const TYPES = {
     Bot: Symbol("Bot"),
     Client: Symbol("Client"),
 
-    // services outils
+    // services utils
     LoggerUtils: Symbol("LoggerUtils"),
     DateUtils: Symbol("DateUtils"),
     RandomUtils: Symbol("RandomUtils"),
 
     // messages
     MessageService: Symbol("MessageService"),
-    MessageUserService: Symbol("MessageUserService"),
     MessageGenericService: Symbol("MessageGenericService"),
     MessageUtils: Symbol("MessageUtils"),
     MessagePoeService: Symbol("MessagePoeService"),
 
-    // users
-    MessageArkaqService: Symbol("MessageArkaqService"),
-    MessageDoliService: Symbol("MessageDoliService"),
-    MessageDrozService: Symbol("MessageDrozService"),
-    MessageTymenService: Symbol("MessageTymenService"),
+    //alerts
+    AlertPoeService: Symbol("AlertPoeService"),
 
     // poe
     PoeCharacterService: Symbol("PoeCharacterService"),

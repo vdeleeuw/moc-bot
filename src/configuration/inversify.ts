@@ -22,6 +22,7 @@ import {
     PoeOilService,
     PoeScarabService,
 } from "../features/poe/services";
+import { AlertPoeService } from "../features/alert/service/alert-poe.service";
 
 const container = new Container();
 
@@ -43,7 +44,7 @@ container.bind<Client>(TYPES.Client).toConstantValue(
     }),
 );
 
-// services
+// utils
 container.bind<LoggerUtils>(TYPES.LoggerUtils).to(LoggerUtils).inSingletonScope();
 container.bind<MessageUtils>(TYPES.MessageUtils).to(MessageUtils).inSingletonScope();
 container.bind<RandomUtils>(TYPES.RandomUtils).to(RandomUtils).inSingletonScope();
@@ -53,6 +54,9 @@ container.bind<DateUtils>(TYPES.DateUtils).to(DateUtils).inSingletonScope();
 container.bind<MessageService>(TYPES.MessageService).to(MessageService).inSingletonScope();
 container.bind<MessageGenericService>(TYPES.MessageGenericService).to(MessageGenericService).inSingletonScope();
 container.bind<MessagePoeService>(TYPES.MessagePoeService).to(MessagePoeService).inSingletonScope();
+
+// alerts
+container.bind<AlertPoeService>(TYPES.AlertPoeService).to(AlertPoeService).inSingletonScope();
 
 // poe
 container.bind<PoeCharacterService>(TYPES.PoeCharacterService).to(PoeCharacterService).inSingletonScope();
