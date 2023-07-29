@@ -31,9 +31,9 @@ export class PoeCharacterService {
      */
     private async initPoeCharacterAlerts() {
         await this.initCharactersAccountAlerts();
-        const delay: number = require("../../../../config.json").poe.deathalert.delay;
+        const delay: number = this.alertPoeService.getAlertDelay();
         setInterval(async () => {
-            const channel: TextBasedChannel = this.alertPoeService.getDeathAlertChannel();
+            const channel: TextBasedChannel = this.alertPoeService.getAlertChannel();
             const updatedCharactersMap: Map<string, PoeCharacter[]> = new Map<string, PoeCharacter[]>();
 
             if (channel) {
@@ -78,9 +78,9 @@ export class PoeCharacterService {
     createAlertPoeMessage(character: PoeCharacter): EmbedBuilder {
         return this.messageUtils.createEmbedMessage(
             "👶 PoE character creation 👶",
-            `${this.messageUtils.bold(character.account)} has just created a new ${this.messageUtils.bold(
+            `${this.messageUtils.bold(character.account)} has created a new ${this.messageUtils.bold(
                 character.class,
-            )} named ${this.messageUtils.bold(character.name)}.`,
+            )} named ${this.messageUtils.bold(character.name)} in ${character.league} league.`,
         );
     }
 
@@ -114,7 +114,7 @@ export class PoeCharacterService {
      * Récupère les persos des comptes paramétrés dans le config.json
      */
     private async initCharactersAccountAlerts() {
-        const accounts: string[] = require("../../../../config.json").poe.deathalert.accounts;
+        const accounts: string[] = require("../../../../config.json").poe.alerts.accounts;
         for (const acc of accounts) {
             this.characters.set(acc, await this.getCharactersAccount(acc));
         }

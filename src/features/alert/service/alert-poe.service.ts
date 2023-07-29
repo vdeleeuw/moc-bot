@@ -3,15 +3,19 @@ import { injectable } from "inversify";
 
 @injectable()
 export class AlertPoeService {
-    private deathAlertChannel: TextBasedChannel;
+    private alertChannel: TextBasedChannel;
 
     constructor() {}
 
-    setDeathAlertChannel(channel: TextBasedChannel): void {
-        this.deathAlertChannel = channel;
+    setAlertChannel(channel: TextBasedChannel): void {
+        this.alertChannel = channel;
     }
 
-    getDeathAlertChannel(): TextBasedChannel {
-        return this.deathAlertChannel;
+    getAlertChannel(): TextBasedChannel {
+        return this.alertChannel;
+    }
+
+    getAlertDelay(): number {
+        return require("../../../../config.json").poe.alerts.delay;
     }
 }

@@ -148,7 +148,7 @@ export class MessagePoeService {
      * @param message le message dans lequel on recup le channel & on repond
      */
     private async sendChannelAlertSetMessage(message: Message): Promise<void> {
-        this.alertPoeService.setDeathAlertChannel(message.channel);
+        this.alertPoeService.setAlertChannel(message.channel);
         message.channel.send({
             embeds: [this.messageUtils.createEmbedMessage("✅ Channel set for PoE alerts")],
         });
@@ -160,7 +160,7 @@ export class MessagePoeService {
      * @param message le message dans lequel on recup le channel & on repond
      */
     private async sendClearChannelAlertMessage(message: Message): Promise<void> {
-        this.alertPoeService.setDeathAlertChannel(undefined);
+        this.alertPoeService.setAlertChannel(undefined);
         message.channel.send({
             embeds: [this.messageUtils.createEmbedMessage("✅ Channel cleared for PoE alerts")],
         });
