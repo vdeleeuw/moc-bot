@@ -6,6 +6,10 @@
         "privateLeague": {
             "id": null,
             "name": null
+        },
+        "deathalert": {
+            "delay": 30000,
+            "accounts": []
         }
     }
 }
