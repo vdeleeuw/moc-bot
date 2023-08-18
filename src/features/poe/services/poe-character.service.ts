@@ -62,7 +62,9 @@ export class PoeCharacterService {
                             });
                         }
                     }
-                    this.characters.set(account, updatedCharacters);
+                    if (updatedCharacters.length !== 0) {
+                        this.characters.set(account, updatedCharacters);
+                    }
                 }
             }
         }, delay);
