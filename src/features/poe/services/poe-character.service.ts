@@ -50,7 +50,7 @@ export class PoeCharacterService {
                             });
                         }
                         // level up
-                        if (oldChar && newChar.level > oldChar.level) {
+                        if (oldChar && newChar.level > oldChar.level && (newChar.level % 10 || newChar.level > 70)) {
                             channel.send({
                                 embeds: [this.levelAlertPoeMessage(newChar)],
                             });
